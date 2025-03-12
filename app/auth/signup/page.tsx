@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
+import axios from 'axios';
 
 const Signup = () => {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -34,8 +35,8 @@ const Signup = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
     }
 
     if (!formData.email.trim()) {
@@ -65,15 +66,33 @@ const Signup = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account created",
-        description: "You've been signed up successfully",
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/userAuth/signup', {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
       });
-      router.push("/login");
-    }, 1500);
+
+      if (response.status === 201) {
+        toast({
+          title: "Account created",
+          description: "You've been signed up successfully",
+        });
+        router.push('/auth/login'); // Redirect after registration
+      } else {
+        toast({
+          title: "Registration failed",
+          description: "Please try again",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error.response?.data?.message || "An error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -90,14 +109,14 @@ const Signup = () => {
       >
         <div className="space-y-4">
           <FormInput
-            label="Full Name"
-            name="name"
+            label="Username"
+            name="username"
             type="text"
-            placeholder="John Doe"
-            autoComplete="name"
-            value={formData.name}
+            placeholder="JohnDoe"
+            autoComplete="username"
+            value={formData.username}
             onChange={handleChange}
-            error={errors.name}
+            error={errors.username}
             icon={User}
             required
           />
