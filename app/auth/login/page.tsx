@@ -1,6 +1,8 @@
-"use client";
+"use client"; 
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+//import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
@@ -187,7 +189,7 @@ const Login = () => {
         <div className="text-center text-sm">
           Don't have an account?{" "}
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="font-medium text-primary hover:text-primary/80 transition-colors"
           >
             Sign up now
