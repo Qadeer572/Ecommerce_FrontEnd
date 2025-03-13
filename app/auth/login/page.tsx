@@ -1,8 +1,6 @@
-"use client"; 
+"use client";
 import React, { useState } from "react";
-//import { useRouter } from "next/router";
 import { useRouter } from "next/navigation";
-
 import { motion } from "framer-motion";
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
@@ -11,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
+import axios from 'axios';
 
 const Login = () => {
   const router = useRouter();
@@ -55,15 +54,32 @@ const Login = () => {
 
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Success",
-        description: "You've been logged in successfully",
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/userAuth/login', {
+        email: formData.email, // Assuming the backend expects 'username' for email
+        password: formData.password,
       });
-      router.push("/");
-    }, 1500);
+
+      if (response.status === 200) {
+        toast({
+          title: "Success",
+          description: "You've been logged in successfully",
+        });
+        router.push("/"); // Redirect after successful login
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Please try again",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error.response?.data?.message || "An error occurred",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

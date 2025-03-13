@@ -61,39 +61,45 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
-
+    console.log("Sending data:", formData);
+  
     try {
       const response = await axios.post('http://127.0.0.1:8000/userAuth/signup', {
         username: formData.username,
         email: formData.email,
         password: formData.password,
       });
-
+  
+      console.log("Response:", response.data);
+  
       if (response.status === 201) {
+        console.log("Response: Success");
         toast({
           title: "Account created",
           description: "You've been signed up successfully",
         });
-        router.push('/auth/login'); // Redirect after registration
+        router.push('/auth/login');
       } else {
         toast({
           title: "Registration failed",
-          description: "Please try again",
+          description: response.data.error || "Please try again",
         });
       }
     } catch (error) {
+      console.log("Error:", error.response?.data);
       toast({
         title: "Registration failed",
-        description: error.response?.data?.message || "An error occurred",
+        description: error.response?.data?.error || "An error occurred",
       });
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <AuthLayout
