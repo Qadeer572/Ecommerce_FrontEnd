@@ -56,7 +56,7 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/userAuth/login', {
-        email: formData.email, // Assuming the backend expects 'username' for email
+        username: formData.email, // Assuming the backend expects 'username' for email
         password: formData.password,
       });
 
@@ -81,6 +81,11 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  const handleGoogleLogin = () => {
+    window.location.href = "http://127.0.0.1:8000/accounts/google/login/?process=login";
+  };
+  
 
   return (
     <AuthLayout
@@ -172,7 +177,7 @@ const Login = () => {
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <Button variant="outline" type="button" className="h-11">
+          <Button variant="outline" type="button" className="h-11" onClick={handleGoogleLogin}>
             <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
